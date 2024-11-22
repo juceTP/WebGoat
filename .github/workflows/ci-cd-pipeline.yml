@@ -54,7 +54,7 @@ jobs:
 
       # Step 2: Trivy - Scan the Docker Image
       - name: Trivy Vulnerability Scan
-        uses: aquasecurity/trivy-action@v0.29.0
+        uses: aquasecurity/trivy-action@master 
         with:
           image-ref: "${{ secrets.DOCKER_USERNAME }}/webgoat:latest"
 
