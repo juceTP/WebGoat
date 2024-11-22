@@ -45,6 +45,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/webgoat:latest
 
   security-tests:
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout Code
@@ -53,7 +54,7 @@ jobs:
 
       # Step 2: Trivy - Scan the Docker Image
       - name: Trivy Vulnerability Scan
-        uses: aquasecurity/trivy-action@v0.2.1
+        uses: aquasecurity/trivy-action@v0.29.0
         with:
           image-ref: "${{ secrets.DOCKER_USERNAME }}/webgoat:latest"
 
