@@ -43,18 +43,18 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/webgoat:latest
-    security-tests:
+  security-tests:
     needs: build-and-push  # Ensures this job waits for 'build-and-push' to finish
     runs-on: ubuntu-latest
     steps:
         # Step 1: Checkout Code
         - name: Checkout Code
-        uses: actions/checkout@v3
+          uses: actions/checkout@v3
 
         # Step 2: Trivy - Scan the Docker Image
         - name: Trivy Vulnerability Scan
-        uses: aquasecurity/trivy-action@master  # Replace with the correct version/tag if available
-        with:
+          uses: aquasecurity/trivy-action@master  # Replace with the correct version/tag if available
+          with:
             image-ref: "${{ secrets.DOCKER_USERNAME }}/webgoat:latest"
             severity: "CRITICAL,HIGH"
             format: "json"  # Save the results in JSON format
@@ -63,15 +63,11 @@ jobs:
 
         # Step 3: Upload Trivy Results as an Artifact
         - name: Upload Trivy Results
-        uses: actions/upload-artifact@v3
-        with:
+          uses: actions/upload-artifact@v3
+          with:
             name: trivy-results
             path: trivy-results.json
 
-        # Step 4: Docker Scout - Analyze the Docker Image
-        - name: Docker Scout Vulnerability Scan
-        run: |
-            docker scout analyze ${{ secrets.DOCKER_USERNAME }}/webgoat:latest
 
 
 
