@@ -96,20 +96,46 @@ jobs:
 
     # Import Existing Resource
     - name: Import Existing Resource
-      run: terraform import azurerm_resource_group.rg ${{ secrets.AZURE_RESOURCE_ID }}
+      run: |
+        terraform import azurerm_kubernetes_cluster.k8s /subscriptions/${{ secrets.AZURE_RESOURCE_ID }}/resourceGroups/aks-resource-group/providers/Microsoft.ContainerService/managedClusters/aks-cluster; terraform import azurerm_resource_group.rg /subscriptions/${{ secrets.AZURE_RESOURCE_ID }}/resourceGroups/aks-resource-group
       working-directory: terraform
 
     # Terraform Plan
     - name: Terraform Plan
-      run: terraform plan -out=tfplan
+      run: terraform plan 
       working-directory: terraform
 
     # Terraform Apply
     - name: Terraform Apply
-      if: github.event_name == 'push'
-      run: terraform apply -auto-approve tfplan
+      if: success()
+      run: terraform apply -auto-approve
       working-directory: terraform
 
+    # Terraform output
+    - name: Terraform Output
+      run: terraform output -raw kube_config > ~/kubeconfig.yaml
+      working-directory: terraform
 
+    # Install kubectl
+    - name: Install kubectl
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https ca-certificates curl
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        kubectl version --client
+      shell: bash
 
+    # Install Ansible
+    - name: Install Ansible
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y software-properties-common
+        sudo apt-add-repository --yes --update ppa:ansible/ansible
+        sudo apt-get install -y ansible
+        ansible --version
+      shell: bash
 
+    # Ansible Playbook
+    - name: Ansible Playbook
+      run: ansible-playbook ansible/k8s_deploy.yaml
