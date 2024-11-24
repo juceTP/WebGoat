@@ -96,18 +96,19 @@ jobs:
 
     # Import Existing Resource
     - name: Import Existing Resource
-      run: terraform import azurerm_resource_group.rg ${{ secrets.AZURE_RESOURCE_ID }}
+      run: |
+        terraform import azurerm_kubernetes_cluster.k8s /subscriptions/${{ secrets.AZURE_RESOURCE_ID }}/resourceGroups/aks-resource-group/providers/Microsoft.ContainerService/managedClusters/aks-cluster; terraform import azurerm_resource_group.rg /subscriptions/${{ secrets.AZURE_RESOURCE_ID }}/resourceGroups/aks-resource-group
       working-directory: terraform
 
     # Terraform Plan
     - name: Terraform Plan
-      run: terraform plan -out=tfplan
+      run: terraform plan 
       working-directory: terraform
 
     # Terraform Apply
     - name: Terraform Apply
-      if: github.event_name == 'push'
-      run: terraform apply -auto-approve tfplan
+      if: success()
+      run: terraform apply -auto-approve
       working-directory: terraform
 
 

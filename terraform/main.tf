@@ -26,7 +26,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "aks-resource-group"
-  location = "eastus" # Changed to a supported location
+  location = "eastus"
 }
 
 resource "azurerm_kubernetes_cluster" "k8s" {
