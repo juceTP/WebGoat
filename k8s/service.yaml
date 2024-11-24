@@ -5,13 +5,15 @@ metadata:
   labels:
     app: webgoat
 spec:
-  type: LoadBalancer # Exposes the service externally
-  ports:
-  - port: 8080       # External port for 8080
-    targetPort: 8080 # Container port
-    protocol: TCP
-  - port: 9090       # External port for 9090
-    targetPort: 9090 # Container port
-    protocol: TCP
   selector:
     app: webgoat
+  type: LoadBalancer
+  ports:
+  - name: http-port  # Unique name for port 8080
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+  - name: admin-port # Unique name for port 9090
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
