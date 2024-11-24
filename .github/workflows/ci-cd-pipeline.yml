@@ -68,6 +68,49 @@ jobs:
             name: trivy-results
             path: trivy-results.json
 
+  terraform:
+    needs: security-tests
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Azure Login
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Setup Terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+    
+    # Import Existing Resource
+    - name: Import Existing Resource
+      run: |
+        terraform import azurerm_resource_group.rg ${{ secrets.AZURE_RESOURCE_ID }}
+      working-directory: terraform
+
+    # Terraform Init
+    - name: Terraform Init
+      run: terraform init
+      working-directory: terraform
+
+    # Terraform Plan
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan
+      working-directory: terraform
+
+    # Terraform Apply
+    - name: Terraform Apply
+      if: github.event_name == 'push'
+      run: terraform apply -auto-approve tfplan
+      working-directory: terraform
+
 
 
 

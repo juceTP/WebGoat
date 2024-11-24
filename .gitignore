@@ -57,3 +57,19 @@ TestClass.class
 /.gitconfig
 
 webgoat.gitconfig
+
+terraform.tfstate
+terraform.tfstate.*
+
+*.tfstate.backup
+
+crash.log
+
+*.tfplan
+
+.terraform/
+
+*.tfvars
+*.tfvars.json
+
+.terraform.*
