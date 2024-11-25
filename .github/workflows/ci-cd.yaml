@@ -43,6 +43,7 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/webgoat:latest
+          
   security-tests:
     needs: build-and-push  # Ensures this job waits for 'build-and-push' to finish
     runs-on: ubuntu-latest

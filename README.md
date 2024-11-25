@@ -1,3 +1,107 @@
+# CI/CD Pipeline for WebGoat
+
+This repository includes a CI/CD pipeline configuration for the WebGoat application, automating the build, test, security scanning, and deployment process. Below is a detailed breakdown of the pipeline and how it is designed.
+
+---
+
+## Pipeline Overview
+
+The CI/CD pipeline consists of three primary jobs:
+
+1. **Build and Push Docker Image**
+2. **Security Tests**
+3. **Deployment**
+
+Each job ensures that the WebGoat application is thoroughly built, tested, scanned for vulnerabilities, and deployed securely to a Kubernetes cluster.
+
+---
+
+## Job Details
+
+### 1. Build and Push Docker Image
+
+This job builds the WebGoat application and creates a Docker image, which is then pushed to DockerHub.
+
+#### Steps:
+
+1. **Checkout Code**: Pulls the latest code from the repository.
+2. **Set up Java**: Configures Java 21 using the `actions/setup-java` action.
+3. **Build and Test**: Executes Maven commands to build and test the application.
+4. **Log in to DockerHub**: Authenticates with DockerHub using secrets.
+5. **Build Docker Image**: Builds the WebGoat Docker image.
+6. **Push Docker Image**: Pushes the Docker image to DockerHub for later use.
+
+---
+
+### 2. Security Tests
+
+This job scans the Docker image for vulnerabilities using [Trivy](https://github.com/aquasecurity/trivy).
+
+#### Steps:
+
+1. **Checkout Code**: Pulls the latest code for consistent scanning.
+2. **Trivy Vulnerability Scan**: Scans the Docker image for vulnerabilities with severity levels `CRITICAL` and `HIGH`.
+3. **Upload Results**: Saves the scan results as an artifact for future reference.
+
+---
+
+### 3. Deployment
+
+This job deploys the WebGoat application to an Azure Kubernetes Service (AKS) cluster using Terraform and Ansible.
+
+#### Steps:
+
+1. **Checkout Code**: Pulls the latest code.
+2. **Azure Login**: Authenticates with Azure using service principal credentials.
+3. **Terraform Setup**:
+   - Initializes Terraform for managing Azure resources.
+   - Imports existing resources such as the AKS cluster and resource group.
+   - Executes Terraform `plan` and `apply` commands to manage the infrastructure.
+4. **Kubeconfig Setup**: Fetches Kubernetes credentials for interacting with the AKS cluster.
+5. **Ansible Deployment**:
+   - Sets up an Ansible environment.
+   - Runs an Ansible playbook to deploy the WebGoat application to the Kubernetes cluster.
+
+---
+
+## Configuration
+
+### Secrets
+
+The following secrets must be configured in the repository:
+- **DOCKER_USERNAME**: DockerHub username.
+- **DOCKER_PASSWORD**: DockerHub password.
+- **AZURE_CREDENTIALS**: Azure Service Principal credentials in JSON format.
+- **AZURE_RESOURCE_ID**: Azure subscription ID.
+
+### File Structure
+
+- **GitHub Actions Configuration**: `.github/workflows/ci-cd.yml`
+- **Terraform Configurations**: `terraform/` directory with Terraform scripts.
+- **Ansible Playbook**: `ansible/k8s_deploy.yaml` for deploying to AKS.
+
+---
+
+## Running the Pipeline
+
+1. Push code to the `main` branch to trigger the pipeline.
+2. The pipeline will automatically:
+   - Build the application.
+   - Scan for vulnerabilities.
+   - Deploy the application if all tests pass.
+
+---
+
+## Monitoring and Logs
+
+- **Artifacts**: Security scan results are stored as artifacts and can be downloaded for review.
+- **Terraform Logs**: Plan and apply logs are available in the workflow run details.
+- **Ansible Logs**: Detailed logs for the deployment are available with verbose logging enabled.
+
+---
+
+This CI/CD pipeline ensures a reliable, secure, and automated process for deploying the WebGoat application. Feel free to customize it as needed for your environment.
+
 # WebGoat: A deliberately insecure Web Application
 
 [![Build](https://github.com/WebGoat/WebGoat/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/WebGoat/WebGoat/actions/workflows/build.yml)
