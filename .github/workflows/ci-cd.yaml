@@ -113,7 +113,7 @@ jobs:
 
     # Terraform output
     - name: Terraform Output
-      run: terraform output -raw kube_config > ~/kubeconfig.yaml
+      run: terraform output -raw kubeconfig > ~/kubeconfig.yaml
       working-directory: terraform
 
     # Install kubectl
