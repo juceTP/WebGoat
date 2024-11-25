@@ -3,13 +3,13 @@
   hosts: localhost
   tasks:
     - name: Apply Kubernetes Deployment
-      k8s:
+      kubernetes.core.k8s:
         kubeconfig: ~/kubeconfig.yaml
         state: present
         definition: "{{ lookup('file', '../k8s/deployment.yaml') }}"
 
     - name: Apply Kubernetes Service
-      k8s:
+      kubernetes.core.k8s:
         kubeconfig: ~/kubeconfig.yaml
         state: present
         definition: "{{ lookup('file', '../k8s/service.yaml') }}"
