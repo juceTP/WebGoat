@@ -95,7 +95,7 @@ jobs:
       run: terraform init
       working-directory: terraform
 
-    # Import Existing Resource
+    # Import Existing Resources
     - name: Import Existing Resource
       run: |
         terraform import azurerm_kubernetes_cluster.k8s /subscriptions/${{ secrets.AZURE_RESOURCE_ID }}/resourceGroups/aks-resource-group/providers/Microsoft.ContainerService/managedClusters/aks-cluster 
