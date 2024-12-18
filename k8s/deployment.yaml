@@ -6,7 +6,7 @@ metadata:
   labels:
     app: webgoat
 spec:
-  replicas: 3 # Number of pods
+  replicas: 1 # Number of pods
   selector:
     matchLabels:
       app: webgoat
